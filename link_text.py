@@ -1,4 +1,5 @@
 # import module
+import re
 import requests
 from bs4 import BeautifulSoup
 from bs4.element import Comment
@@ -10,11 +11,11 @@ def getdata(url):
 	r = requests.get(url)
 	return r.text
 
-htmldata = getdata("https://www.google.com/search?q=beautifulsoup+findall+links&biw=1301&bih=639&ei=LdwmYqTmO4iTseMPkcSb8AE&oq=findall+beautifulsoup+link+&gs_lcp=Cgdnd3Mtd2l6EAEYADIGCAAQFhAeMgYIABAWEB4yBggAEBYQHjIGCAAQFhAeMgYIABAWEB4yBggAEBYQHjIGCAAQFhAeOgcIABBHELADOgQIABAKSgQIQRgASgQIRhgAUKMJWIITYOwhaAFwAXgAgAHbAYgBvgeSAQUwLjUuMZgBAKABAcgBCMABAQ&sclient=gws-wiz")
+htmldata = getdata("https://www.google.com/search?q=russsia&oq=russsia+&aqs=chrome..69i57.2172j0j9&sourceid=chrome&ie=UTF-8")
 soup = BeautifulSoup(htmldata, 'html.parser')
 links = []
-for data in soup.find_all("a", href=True):
-	links.append(data['href'])
+for data in soup.find_all("a",href=re.compile("(?<=/url\?q=)(htt.*://.*)")):
+	links.append((re.split(":(?=http)",data["href"].replace("/url?q=","")))[0].split("&")[0])
 
 
 def tag_visible(element):
@@ -32,13 +33,13 @@ def text_from_html(body):
     return u" ".join(t.strip() for t in visible_texts)
     
 
-try:
-         for link in links:
-             print(link)
-             print("----------over---------")
-            #html = urlopen(link).read()
-            #print(text_from_html(html))
+for link in links:
+    try:
+            #print(link)
+            html = urlopen(link).read()
+            print(text_from_html(html))
+            print("----------------OVER-----------------")
 	#print(type(text_from_html(html)))
 
-except:
+    except Exception as e:
         print(e)
