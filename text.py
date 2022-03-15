@@ -14,14 +14,15 @@ def tag_visible(element):
 def text_from_html(body):
     soup = BeautifulSoup(body, 'html.parser')
     texts = soup.findAll(text=True)
-    visible_texts = filter(tag_visible, texts)  
+    visible_texts = filter(tag_visible, texts)
     return u" ".join(t.strip() for t in visible_texts)
-    
+
 
 try:
-	html = urlopen('https://www.w3schools.com/python/python_try_except.asp').read()
-	print(text_from_html(html))
-	#print(type(text_from_html(html)))
+    html = urlopen(
+        'https://www.w3schools.com/python/python_try_except.asp').read()
+    print(text_from_html(html))
+
 
 except:
-	print('Error')
+    print('Error')

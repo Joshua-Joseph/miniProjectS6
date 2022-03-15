@@ -1,4 +1,4 @@
-# import module
+# importing modules
 import re
 import requests
 from bs4 import BeautifulSoup
@@ -9,8 +9,6 @@ import time
 
 
 # link for extracting html data
-
-
 def getdata(url):
     r = requests.get(url)
     return r.text
@@ -22,6 +20,8 @@ links = []
 for data in soup.find_all("a", href=re.compile("(?<=/url\?q=)(htt.*://.*)")):
     links.append(
         (re.split(":(?=http)", data["href"].replace("/url?q=", "")))[0].split("&")[0])
+
+# extracting the visible(on website) text
 
 
 def tag_visible(element):
@@ -39,48 +39,21 @@ def text_from_html(body):
     return u" ".join(t.strip() for t in visible_texts)
 
 
-# i = 0
-# j = 0
-# print(len(links))
-# for link in links:
-#     try:
-#         print(link)
-#         html = urlopen(link).read()
-#         print(text_from_html(html))
-
-#         # print(type(text_from_html(html)))
-
-#     except Exception as e:
-#         print(e)
-#         j += 1
-
-#     print("----------------OVER--- "+str(i)+" ------------")
-#     i += 1
-
-# print(len(links)-j)
-
-
-i = 0
+# text from each link overwrites the previous one therefore we need to pass the file before updation to the model
 t1 = time.time()
 for link in links:
     try:
         html = urlopen(link).read()
-        f = open("demo.txt", "a")
-        f.write(str(i))
-        f.close()
-        f = open("demo.txt", "a")
+        f = open("demo.txt", "w")
         f.write(text_from_html(html))
         f.close()
+        # pass this file to the model
 
     except Exception as e:
-        f = open("demo.txt", "a")
-        f.write(str(i))
-        f.close()
-        f = open("demo.txt", "a")
+        f = open("demo.txt", "w")
         f.write(str(e))
         f.close()
 
-    i += 1
 
 t2 = time.time()
 print(t2-t1)  # close to 30-35 s
