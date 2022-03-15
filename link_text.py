@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 from bs4.element import Comment
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
+import time
+
 
 # link for extracting html data
 
@@ -59,7 +61,7 @@ def text_from_html(body):
 
 
 i = 0
-
+t1 = time.time()
 for link in links:
     try:
         html = urlopen(link).read()
@@ -79,3 +81,6 @@ for link in links:
         f.close()
 
     i += 1
+
+t2 = time.time()
+print(t2-t1)  # close to 30-35 s
