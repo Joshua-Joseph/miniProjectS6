@@ -18,6 +18,7 @@ htmldata = getdata("https://www.google.com/search?q=set+default+python+interpret
 soup = BeautifulSoup(htmldata, 'html.parser')
 links = []
 for data in soup.find_all("a", href=re.compile("(?<=/url\?q=)(htt.*://.*)")):
+    print(data)
     links.append(
         (re.split(":(?=http)", data["href"].replace("/url?q=", "")))[0].split("&")[0])
 
@@ -44,10 +45,11 @@ t1 = time.time()
 for link in links:
     try:
         html = urlopen(link).read()
-        f = open("demo.txt", "w")
-        f.write(text_from_html(html))
-        f.close()
+        # f = open("demo.txt", "w")
+        # f.write(text_from_html(html))
+        # f.close()
         # pass this file to the model
+        # print(text_from_html(html))
 
     except Exception as e:
         f = open("demo.txt", "w")
