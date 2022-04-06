@@ -29,7 +29,7 @@ def extractText(link):
         html = urlopen(link).read()
         extractedText = text_from_html(html)
     except Exception as e:
-        extractedText = e
+        extractedText = ""
 
     return extractedText
 
@@ -43,26 +43,36 @@ def preprocessText(text):
         (token.is_stop == False) and (len(token) > 2))]
     #filtered2 = ' '.join([str(elem) for elem in filtered])
     # print(len(filtered))
-    vectorizer = joblib.load('core/vect_model.pkl')
+    vectorizer = joblib.load('core/sports/sports_vect_model.pkl')
     # vectorization = TfidfVectorizer(max_df=0.7)
     filterV = vectorizer.transform(filtered)
     # print(filterV)
-    clf = joblib.load('core/clf_svm_model.pkl')
+    clf = joblib.load('core/sports/sports_clf_svm_model.pkl')
     result = clf.predict(filterV)
+    # print(result)
+    count = 0
     for i in range(len(result)):
+        # print(result[i])
         if(result[i] == 1):
-            return False
+            count += 1
 
-    return True
+    print(count)
+
+    if(count >= 50):
+        return False
+    else:
+        return True
 
 
 def main():
-    link = 'https://www.geeksforgeeks.org/what-does-the-if-__name__-__main__-do/'
+    link = 'https://www.geeksforgeeks.org/vector-of-vectors-in-c-stl-with-examples/'
     extractedText = extractText(link)
     # print(extractedText)
-
-    safe = preprocessText(extractedText)
-    print(safe)
+    if (extractedText != ""):
+        safe = preprocessText(extractedText)
+        print(safe)
+    else:
+        print('Could not resolve')
 
 
 if __name__ == "__main__":
