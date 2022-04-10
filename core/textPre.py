@@ -49,20 +49,29 @@ def preprocessText(text):
     # print(filterV)
     clf = joblib.load('core/clf_svm_model.pkl')
     result = clf.predict(filterV)
+    count = 0
     for i in range(len(result)):
+        # print(result[i])
         if(result[i] == 1):
-            return False
+            count += 1
 
-    return True
+    if(count/len(result) >= 0.05):
+        return 0
+    else:
+        return 1
 
 
 def main():
-    link = 'https://www.geeksforgeeks.org/what-does-the-if-__name__-__main__-do/'
+    link = 'https://www.geeksforgeeks.org/what-does-the-if-__name__-__main__-do/'  # 1
     extractedText = extractText(link)
     # print(extractedText)
 
-    safe = preprocessText(extractedText)
-    print(safe)
+    if (extractedText != ""):
+        safe = preprocessText(extractedText)
+        print(safe)
+    else:
+        safe = 2
+        print(safe)
 
 
 if __name__ == "__main__":

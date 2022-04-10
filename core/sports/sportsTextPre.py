@@ -56,23 +56,23 @@ def preprocessText(text):
         if(result[i] == 1):
             count += 1
 
-    print(count)
-
-    if(count >= 50):
-        return False
+    if(count/len(result) >= 0.05):
+        return 0
     else:
-        return True
+        return 1
 
 
 def main():
-    link = 'https://www.geeksforgeeks.org/vector-of-vectors-in-c-stl-with-examples/'
+    # link = 'https://www.geeksforgeeks.org/vector-of-vectors-in-c-stl-with-examples/' #1
+    link = 'https://www.fifa.com/'  # 0
     extractedText = extractText(link)
     # print(extractedText)
     if (extractedText != ""):
         safe = preprocessText(extractedText)
         print(safe)
     else:
-        print('Could not resolve')
+        safe = 2
+        print(safe)
 
 
 if __name__ == "__main__":
