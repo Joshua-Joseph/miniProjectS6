@@ -8,8 +8,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+
 const verifyUrls = () => {
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
+    chrome.scripting.executeScript({
+        target: {tabId: tabs[0].id, allFrames: true},
+        files: ['content_scripts/script.js'],
+      });
         
         let parser = new DOMParser()
         window.fetch(tabs[0].url, {
@@ -23,29 +29,28 @@ const verifyUrls = () => {
             // return doc.body.innerText.replace(/\s/g,'')
         })
         .then(data => {
-            let final = []
              Array.from(data).map(i => {
                 let parsedA = parser.parseFromString(i.innerHTML, 'text/html')
                 let h3Main = parsedA.getElementsByTagName("h3")
+                console.log(i.classList, i.id, i.className)
                 if(h3Main.length > 0) {
-                    final.push(i.href)
+                    window.fetch(`${API_BASE_URL}/verify`, {
+                        method: "POST",
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url: i.href })
+                    })
+                    .then(async(_res) => {
+                        const res = await _res.json();
+                        console.log(res.result, h3Url)
+                        // if (res.result === 0) {
+                        //     injectGreenTick(i);
+                        // } else if (res.result === 1) {
+                        //     injectRedCross(i);
+                        // }
+                    })
+                    .catch(err => console.warn(err.toString()))
                 }
             })
-            console.log(final)
-            window.fetch(`${API_BASE_URL}/verify`, {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ urls: final })
-        })
-        .then(async(res) => {
-            const pythonResponse = await res.json();
-            if (pythonResponse.success) {
-                window.location.href = "results.html"
-            } else {
-                window.location.href = "error.html"
-            }
-        })
-        .catch(err => console.warn(err.toString()))
         })
         .catch(err => console.warn(err.toString()));
 

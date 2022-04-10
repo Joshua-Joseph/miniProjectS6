@@ -5,12 +5,20 @@ from bs4 import BeautifulSoup
 from bs4.element import Comment
 from urllib.request import Request, urlopen
 import spacy
+
 nlp = spacy.load("en_core_web_sm")
 stop = STOP_WORDS
 
 
 def tag_visible(element):
-    if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
+    if element.parent.name in [
+        "style",
+        "script",
+        "head",
+        "title",
+        "meta",
+        "[document]",
+    ]:
         return False
     if isinstance(element, Comment):
         return False
@@ -18,10 +26,10 @@ def tag_visible(element):
 
 
 def text_from_html(body):
-    soup = BeautifulSoup(body, 'html.parser')
+    soup = BeautifulSoup(body, "html.parser")
     texts = soup.findAll(text=True)
     visible_texts = filter(tag_visible, texts)
-    return u" ".join(t.strip() for t in visible_texts)
+    return " ".join(t.strip() for t in visible_texts)
 
 
 def extractText(link):
@@ -37,43 +45,43 @@ def extractText(link):
 def preprocessText(text):
     doc = nlp(text)
     lemma = [token.lemma_ for token in doc]
-    lemma2 = ' '.join([str(elem) for elem in lemma])
+    lemma2 = " ".join([str(elem) for elem in lemma])
     doc2 = nlp(lemma2)
-    filtered = [token.text for token in doc2 if (
-        (token.is_stop == False) and (len(token) > 2))]
-    #filtered2 = ' '.join([str(elem) for elem in filtered])
+    filtered = [
+        token.text for token in doc2 if ((token.is_stop == False) and (len(token) > 2))
+    ]
+    # filtered2 = ' '.join([str(elem) for elem in filtered])
     # print(len(filtered))
-    vectorizer = joblib.load('core/sports/sports_vect_model.pkl')
+    vectorizer = joblib.load("core/sports/sports_vect_model.pkl")
     # vectorization = TfidfVectorizer(max_df=0.7)
     filterV = vectorizer.transform(filtered)
     # print(filterV)
-    clf = joblib.load('core/sports/sports_clf_svm_model.pkl')
+    clf = joblib.load("core/sports/sports_clf_svm_model.pkl")
     result = clf.predict(filterV)
     # print(result)
     count = 0
     for i in range(len(result)):
         # print(result[i])
-        if(result[i] == 1):
+        if result[i] == 1:
             count += 1
 
-    if(count/len(result) >= 0.05):
+    if count / len(result) >= 0.05:
         return 0
     else:
         return 1
 
 
-def main():
-    # link = 'https://www.geeksforgeeks.org/vector-of-vectors-in-c-stl-with-examples/' #1
-    link = 'https://www.fifa.com/'  # 0
+def sportsUrlProcessor(link):
     extractedText = extractText(link)
     # print(extractedText)
-    if (extractedText != ""):
+    if extractedText != "":
         safe = preprocessText(extractedText)
         print(safe)
     else:
         safe = 2
         print(safe)
+    return safe
 
 
 if __name__ == "__main__":
-    main()
+    sportsUrlProcessor("https://www.fifa.com/")

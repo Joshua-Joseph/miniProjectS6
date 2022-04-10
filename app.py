@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+from core.sports.sportsTextPre import sportsUrlProcessor
+from core.textPre import bullyUrlProcessor
+
 app = Flask(__name__)
 CORS(app)
 
@@ -18,6 +21,8 @@ def index():
 @app.route("/verify", methods=["POST"])
 def verify():
     request_data = request.get_json(force=True)
-    tab_url = request_data["tab_url"]
-    print(tab_url)
-    return jsonify({"success": True, "results": ["safe", "safe", "unsafe", "safe"]})
+    url = request_data["url"]
+    print(url)
+    # result = sportsUrlProcessor(url)
+    result = bullyUrlProcessor(url)
+    return jsonify({"success": True, "result": result})
