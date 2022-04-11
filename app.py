@@ -23,6 +23,6 @@ def verify():
     request_data = request.get_json(force=True)
     url = request_data["url"]
     print(url)
-    # result = sportsUrlProcessor(url)
-    result = bullyUrlProcessor(url)
+    result = sportsUrlProcessor(url)
+    # result = bullyUrlProcessor(url)
     return jsonify({"success": True, "result": result})
