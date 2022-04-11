@@ -37,7 +37,7 @@ def extractText(link):
         html = urlopen(link).read()
         extractedText = text_from_html(html)
     except Exception as e:
-        extractedText = e
+        extractedText = ""
 
     return extractedText
 
@@ -87,4 +87,5 @@ def bullyUrlProcessor(link):
 if __name__ == "__main__":
     bullyUrlProcessor(
         "https://www.geeksforgeeks.org/what-does-the-if-__name__-__main__-do/"
+        # "https://www.softwaretestinghelp.com/linked-list/"
     )
