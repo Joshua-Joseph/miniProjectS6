@@ -79,7 +79,7 @@ def bullyUrlProcessor(link):
         safe = preprocessText(extractedText)
         print(safe)
     else:
-        safe = 2
+        safe = 1
         print(safe)
     return safe
 
